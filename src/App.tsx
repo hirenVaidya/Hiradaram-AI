@@ -10,11 +10,16 @@ function App() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (viewMode === 'login') {
-      console.log('Login submitted:', { email, password });
+      if (email.toLowerCase() === 'hiren') {
+        setIsLoggedIn(true);
+      } else {
+        console.log('Login submitted:', { email, password });
+      }
     } else if (viewMode === 'signup') {
       console.log('Signup submitted:', { username, email, password });
     } else if (viewMode === 'forgot') {
@@ -95,6 +100,22 @@ function App() {
 
   const { title, subtitle } = renderHeader();
 
+  if (isLoggedIn) {
+    return (
+      <div className="home-container">
+        <h1>Welcome to the Home Page</h1>
+        <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>You have successfully logged in.</p>
+        <button 
+          className="login-button" 
+          onClick={() => setIsLoggedIn(false)} 
+          style={{ marginTop: '24px', padding: '12px 32px', width: 'auto' }}
+        >
+          Logout
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="login-container">
       <div className="login-card">
@@ -122,14 +143,14 @@ function App() {
           {(viewMode === 'login' || viewMode === 'signup' || viewMode === 'forgot') && (
             <div className="input-group">
               <input 
-                type="email" 
+                type="text" 
                 id="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder=" "
               />
-              <label htmlFor="email">Email address</label>
+              <label htmlFor="email">Email or Username</label>
             </div>
           )}
 
