@@ -105,9 +105,8 @@ function App() {
       <div className="home-container">
         <h1 className="hero-text">WE DON'T ONLY IMAGINE<br />BUT CREATE INTO REALITY</h1>
         <button 
-          className="login-button" 
+          className="login-button logout-button" 
           onClick={() => setIsLoggedIn(false)} 
-          style={{ marginTop: '40px', padding: '12px 32px', width: 'auto' }}
         >
           Logout
         </button>
