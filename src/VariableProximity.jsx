@@ -55,6 +55,7 @@ const VariableProximity = forwardRef((props, ref) => {
     className = '',
     onClick,
     style,
+    highlightIndex,
     ...restProps
   } = props;
 
@@ -159,6 +160,7 @@ const VariableProximity = forwardRef((props, ref) => {
             return (
               <motion.span
                 key={currentLetterIndex}
+                id={currentLetterIndex === highlightIndex ? 'zoom-target' : undefined}
                 ref={el => {
                   letterRefs.current[currentLetterIndex] = el;
                 }}

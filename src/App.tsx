@@ -1,11 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import VariableProximity from './VariableProximity';
+import { motion, useScroll, useTransform } from 'motion/react';
 
 type ViewMode = 'login' | 'signup' | 'forgot' | 'otp';
 
 function App() {
   const containerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('login');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -102,34 +104,78 @@ function App() {
 
   const { title, subtitle } = renderHeader();
 
+  const [origin, setOrigin] = useState("50% 50%");
+  const { scrollYProgress } = useScroll({
+    target: scrollContainerRef,
+    offset: ["start start", "end end"]
+  });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 150]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const updateOrigin = () => {
+      const target = document.getElementById('zoom-target');
+      const container = document.getElementById('zoom-container');
+      if (target && container) {
+        const targetRect = target.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const x = targetRect.left + targetRect.width / 2 - containerRect.left;
+        const y = targetRect.top + targetRect.height / 2 - containerRect.top;
+        const xPercent = (x / containerRect.width) * 100;
+        const yPercent = (y / containerRect.height) * 100;
+        setOrigin(`${xPercent}% ${yPercent}%`);
+      }
+    };
+    setTimeout(updateOrigin, 100);
+    window.addEventListener('resize', updateOrigin);
+    return () => window.removeEventListener('resize', updateOrigin);
+  }, [isLoggedIn]);
+
   if (isLoggedIn) {
     return (
-      <div className="home-container" ref={containerRef} style={{ position: 'relative' }}>
-        <div className="variable-proximity-demo" style={{ maxWidth: '100%', padding: '0 20px' }}>
-          <VariableProximity
-            label={"WE DON'T ONLY IMAGINE"}
-            fromFontVariationSettings="'wght' 400, 'opsz' 9"
-            toFontVariationSettings="'wght' 1000, 'opsz' 40"
-            containerRef={containerRef}
-            radius={120}
-            falloff="linear"
-          />
-          <br />
-          <VariableProximity
-            label={"BUT CREATE INTO REALITY"}
-            fromFontVariationSettings="'wght' 400, 'opsz' 9"
-            toFontVariationSettings="'wght' 1000, 'opsz' 40"
-            containerRef={containerRef}
-            radius={120}
-            falloff="linear"
-          />
+      <div ref={scrollContainerRef} style={{ height: '400vh', width: '100vw', background: 'var(--bg-dark)' }}>
+        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <motion.div 
+            id="zoom-container"
+            style={{ 
+              scale, 
+              transformOrigin: origin,
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+            <div className="variable-proximity-demo" ref={containerRef} style={{ maxWidth: '100%', padding: '0 20px', position: 'relative' }}>
+              <VariableProximity
+                label={"WE DON'T ONLY IMAGINE"}
+                highlightIndex={7}
+                fromFontVariationSettings="'wght' 400, 'opsz' 9"
+                toFontVariationSettings="'wght' 1000, 'opsz' 40"
+                containerRef={containerRef}
+                radius={120}
+                falloff="linear"
+              />
+              <br />
+              <VariableProximity
+                label={"BUT CREATE INTO REALITY"}
+                fromFontVariationSettings="'wght' 400, 'opsz' 9"
+                toFontVariationSettings="'wght' 1000, 'opsz' 40"
+                containerRef={containerRef}
+                radius={120}
+                falloff="linear"
+              />
+            </div>
+          </motion.div>
+          
+          <button 
+            className="login-button logout-button" 
+            onClick={() => setIsLoggedIn(false)} 
+            style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 100, width: 'auto', padding: '12px 32px' }}
+          >
+            Logout
+          </button>
         </div>
-        <button 
-          className="login-button logout-button" 
-          onClick={() => setIsLoggedIn(false)} 
-        >
-          Logout
-        </button>
       </div>
     );
   }
