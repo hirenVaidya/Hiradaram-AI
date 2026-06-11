@@ -155,7 +155,23 @@ function App() {
 
   if (isLoggedIn) {
     return (
-      <div ref={scrollContainerRef} style={{ height: '400vh', width: '100%', background: 'var(--bg-dark)' }}>
+      <>
+        <div className="glass-navbar">
+          <div className="nav-left">
+            {/* Logo space */}
+          </div>
+          <div className="nav-center">
+            <a href="#">Features</a>
+            <a href="#">About</a>
+          </div>
+          <div className="nav-right">
+            <button className="nav-action-button" onClick={() => setIsLoggedIn(false)}>
+              Logout
+            </button>
+          </div>
+        </div>
+
+        <div ref={scrollContainerRef} style={{ height: '400vh', width: '100%', background: 'var(--bg-dark)' }}>
         <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
           <motion.div 
             id="zoom-container"
@@ -191,16 +207,9 @@ function App() {
               />
             </div>
           </motion.div>
-          
-          <button 
-            className="login-button logout-button" 
-            onClick={() => setIsLoggedIn(false)} 
-            style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 100, width: 'auto', padding: '12px 32px' }}
-          >
-            Logout
-          </button>
         </div>
       </div>
+      </>
     );
   }
 
