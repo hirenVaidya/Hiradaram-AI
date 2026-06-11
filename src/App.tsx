@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import VariableProximity from './VariableProximity';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
 
 type ViewMode = 'login' | 'signup' | 'forgot' | 'otp';
 
@@ -104,14 +104,17 @@ function App() {
 
   const { title, subtitle } = renderHeader();
 
-  const [targetPos, setTargetPos] = useState({ x: 0, y: 0 });
+  const xTarget = useMotionValue(0);
+  const yTarget = useMotionValue(0);
+
   const { scrollYProgress } = useScroll({
     target: scrollContainerRef,
     offset: ["start start", "end end"]
   });
+  
   const scale = useTransform(scrollYProgress, [0, 1], [1, 150]);
-  const x = useTransform(scrollYProgress, [0, 1], [0, targetPos.x]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, targetPos.y]);
+  const x = useTransform(scrollYProgress, v => v * xTarget.get());
+  const y = useTransform(scrollYProgress, v => v * yTarget.get());
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -119,38 +122,40 @@ function App() {
       const target = document.getElementById('zoom-target');
       const container = document.getElementById('zoom-container');
       if (target && container) {
-        // Temporarily remove transform to measure accurately even if already scrolled
         const originalTransform = container.style.transform;
         container.style.transform = 'none';
         
         const targetRect = target.getBoundingClientRect();
         
-        // Find exact center of the 'O'
         const ox = targetRect.left + targetRect.width / 2;
         const oy = targetRect.top + targetRect.height / 2;
         
-        // Find exact center of screen
-        const cx = window.innerWidth / 2;
+        const cx = document.documentElement.clientWidth / 2;
         const cy = window.innerHeight / 2;
         
-        // Calculate offset
         const dx = ox - cx;
         const dy = oy - cy;
         
-        // To keep 'O' in center at scale 150, we translate by -150 * dx
-        setTargetPos({ x: -150 * dx, y: -150 * dy });
+        xTarget.set(-150 * dx);
+        yTarget.set(-150 * dy);
         
         container.style.transform = originalTransform;
       }
     };
-    setTimeout(updateOrigin, 100);
+    
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => setTimeout(updateOrigin, 50));
+    } else {
+      setTimeout(updateOrigin, 300);
+    }
+    
     window.addEventListener('resize', updateOrigin);
     return () => window.removeEventListener('resize', updateOrigin);
   }, [isLoggedIn]);
 
   if (isLoggedIn) {
     return (
-      <div ref={scrollContainerRef} style={{ height: '400vh', width: '100vw', background: 'var(--bg-dark)' }}>
+      <div ref={scrollContainerRef} style={{ height: '400vh', width: '100%', background: 'var(--bg-dark)' }}>
         <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
           <motion.div 
             id="zoom-container"
