@@ -63,6 +63,25 @@ function App() {
     }
   };
 
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').trim();
+    if (!pastedData || isNaN(Number(pastedData))) return;
+
+    const digits = pastedData.slice(0, 6).split('');
+    const newOtp = [...otp];
+    
+    digits.forEach((digit, i) => {
+      if (i < 6) newOtp[i] = digit;
+    });
+    
+    setOtp(newOtp);
+
+    const nextIndex = Math.min(digits.length, 5);
+    const nextInput = document.getElementById(`otp-${nextIndex}`);
+    nextInput?.focus();
+  };
+
   const renderHeader = () => {
     switch (viewMode) {
       case 'login': return { title: 'Welcome Back', subtitle: 'Please enter your details to sign in.' };
@@ -138,6 +157,7 @@ function App() {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                  onPaste={handleOtpPaste}
                   autoComplete="off"
                   maxLength={1}
                   required
