@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import VariableProximity from './VariableProximity';
 import Features from './Features';
+import About from './About';
 import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
 
 type ViewMode = 'login' | 'signup' | 'forgot' | 'otp';
@@ -10,7 +11,7 @@ function App() {
   const containerRef = useRef(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('login');
-  const [loggedInView, setLoggedInView] = useState<'home' | 'features'>('home');
+  const [loggedInView, setLoggedInView] = useState<'home' | 'features' | 'about'>('home');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -177,6 +178,13 @@ function App() {
             >
               Features
             </a>
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); setLoggedInView('about'); }}
+              style={{ color: loggedInView === 'about' ? '#fff' : undefined }}
+            >
+              About
+            </a>
           </div>
           <div className="nav-right">
             <button className="nav-action-button" onClick={() => { setIsLoggedIn(false); setLoggedInView('home'); }}>
@@ -227,6 +235,7 @@ function App() {
       )}
       
       {loggedInView === 'features' && <Features />}
+      {loggedInView === 'about' && <About />}
       </>
     );
   }
