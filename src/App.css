@@ -94,7 +94,7 @@
 
 .input-group input {
   width: 100%;
-  padding: 16px 16px;
+  padding: 16px 48px 16px 16px;
   background: var(--input-bg);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
@@ -130,6 +130,28 @@
   padding: 0 4px;
   color: var(--primary-color);
   border-radius: 4px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.toggle-password:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .form-actions {
