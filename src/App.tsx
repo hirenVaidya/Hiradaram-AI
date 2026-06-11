@@ -103,12 +103,11 @@ function App() {
   if (isLoggedIn) {
     return (
       <div className="home-container">
-        <h1>Welcome to the Home Page</h1>
-        <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>You have successfully logged in.</p>
+        <h1 className="hero-text">WE DON'T ONLY IMAGINE<br />BUT CREATE INTO REALITY</h1>
         <button 
           className="login-button" 
           onClick={() => setIsLoggedIn(false)} 
-          style={{ marginTop: '24px', padding: '12px 32px', width: 'auto' }}
+          style={{ marginTop: '40px', padding: '12px 32px', width: 'auto' }}
         >
           Logout
         </button>
