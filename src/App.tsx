@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
 import './App.css';
+import VariableProximity from './VariableProximity';
 
 type ViewMode = 'login' | 'signup' | 'forgot' | 'otp';
 
 function App() {
+  const containerRef = useRef(null);
   const [viewMode, setViewMode] = useState<ViewMode>('login');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -102,8 +104,16 @@ function App() {
 
   if (isLoggedIn) {
     return (
-      <div className="home-container">
-        <h1 className="hero-text">WE DON'T ONLY IMAGINE<br />BUT CREATE INTO REALITY</h1>
+      <div className="home-container" ref={containerRef} style={{ position: 'relative' }}>
+        <VariableProximity
+          label={"WE DON'T ONLY IMAGINE BUT CREATE INTO REALITY"}
+          className={'variable-proximity-demo'}
+          fromFontVariationSettings="'wght' 400, 'opsz' 9"
+          toFontVariationSettings="'wght' 1000, 'opsz' 40"
+          containerRef={containerRef}
+          radius={120}
+          falloff="linear"
+        />
         <button 
           className="login-button logout-button" 
           onClick={() => setIsLoggedIn(false)} 
