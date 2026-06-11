@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import VariableProximity from './VariableProximity';
+import Features from './Features';
 import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
 
 type ViewMode = 'login' | 'signup' | 'forgot' | 'otp';
@@ -9,6 +10,7 @@ function App() {
   const containerRef = useRef(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('login');
+  const [loggedInView, setLoggedInView] = useState<'home' | 'features'>('home');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -117,7 +119,7 @@ function App() {
   const y = useTransform(scrollYProgress, v => v * yTarget.get());
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || loggedInView !== 'home') return;
     const updateOrigin = () => {
       const target = document.getElementById('zoom-target');
       const container = document.getElementById('zoom-container');
@@ -161,17 +163,30 @@ function App() {
             {/* Logo space */}
           </div>
           <div className="nav-center">
-            <a href="#">Features</a>
-            <a href="#">About</a>
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); setLoggedInView('home'); }}
+              style={{ color: loggedInView === 'home' ? '#fff' : undefined }}
+            >
+              Home
+            </a>
+            <a 
+              href="#" 
+              onClick={(e) => { e.preventDefault(); setLoggedInView('features'); }}
+              style={{ color: loggedInView === 'features' ? '#fff' : undefined }}
+            >
+              Features
+            </a>
           </div>
           <div className="nav-right">
-            <button className="nav-action-button" onClick={() => setIsLoggedIn(false)}>
+            <button className="nav-action-button" onClick={() => { setIsLoggedIn(false); setLoggedInView('home'); }}>
               Logout
             </button>
           </div>
         </div>
 
-        <div ref={scrollContainerRef} style={{ height: '400vh', width: '100%', background: 'var(--bg-dark)' }}>
+        {loggedInView === 'home' && (
+          <div ref={scrollContainerRef} style={{ height: '400vh', width: '100%', background: 'var(--bg-dark)' }}>
         <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
           <motion.div 
             id="zoom-container"
@@ -209,6 +224,9 @@ function App() {
           </motion.div>
         </div>
       </div>
+      )}
+      
+      {loggedInView === 'features' && <Features />}
       </>
     );
   }
