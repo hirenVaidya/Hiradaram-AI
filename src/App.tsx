@@ -105,15 +105,25 @@ function App() {
   if (isLoggedIn) {
     return (
       <div className="home-container" ref={containerRef} style={{ position: 'relative' }}>
-        <VariableProximity
-          label={"WE DON'T ONLY IMAGINE BUT CREATE INTO REALITY"}
-          className={'variable-proximity-demo'}
-          fromFontVariationSettings="'wght' 400, 'opsz' 9"
-          toFontVariationSettings="'wght' 1000, 'opsz' 40"
-          containerRef={containerRef}
-          radius={120}
-          falloff="linear"
-        />
+        <div className="variable-proximity-demo" style={{ maxWidth: '100%', padding: '0 20px' }}>
+          <VariableProximity
+            label={"WE DON'T ONLY IMAGINE"}
+            fromFontVariationSettings="'wght' 400, 'opsz' 9"
+            toFontVariationSettings="'wght' 1000, 'opsz' 40"
+            containerRef={containerRef}
+            radius={120}
+            falloff="linear"
+          />
+          <br />
+          <VariableProximity
+            label={"BUT CREATE INTO REALITY"}
+            fromFontVariationSettings="'wght' 400, 'opsz' 9"
+            toFontVariationSettings="'wght' 1000, 'opsz' 40"
+            containerRef={containerRef}
+            radius={120}
+            falloff="linear"
+          />
+        </div>
         <button 
           className="login-button logout-button" 
           onClick={() => setIsLoggedIn(false)} 
