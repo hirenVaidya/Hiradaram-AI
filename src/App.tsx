@@ -104,12 +104,14 @@ function App() {
 
   const { title, subtitle } = renderHeader();
 
-  const [origin, setOrigin] = useState("50% 50%");
+  const [targetPos, setTargetPos] = useState({ x: 0, y: 0 });
   const { scrollYProgress } = useScroll({
     target: scrollContainerRef,
     offset: ["start start", "end end"]
   });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 150]);
+  const x = useTransform(scrollYProgress, [0, 1], [0, targetPos.x]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, targetPos.y]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -117,13 +119,28 @@ function App() {
       const target = document.getElementById('zoom-target');
       const container = document.getElementById('zoom-container');
       if (target && container) {
+        // Temporarily remove transform to measure accurately even if already scrolled
+        const originalTransform = container.style.transform;
+        container.style.transform = 'none';
+        
         const targetRect = target.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const x = targetRect.left + targetRect.width / 2 - containerRect.left;
-        const y = targetRect.top + targetRect.height / 2 - containerRect.top;
-        const xPercent = (x / containerRect.width) * 100;
-        const yPercent = (y / containerRect.height) * 100;
-        setOrigin(`${xPercent}% ${yPercent}%`);
+        
+        // Find exact center of the 'O'
+        const ox = targetRect.left + targetRect.width / 2;
+        const oy = targetRect.top + targetRect.height / 2;
+        
+        // Find exact center of screen
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        
+        // Calculate offset
+        const dx = ox - cx;
+        const dy = oy - cy;
+        
+        // To keep 'O' in center at scale 150, we translate by -150 * dx
+        setTargetPos({ x: -150 * dx, y: -150 * dy });
+        
+        container.style.transform = originalTransform;
       }
     };
     setTimeout(updateOrigin, 100);
@@ -139,7 +156,9 @@ function App() {
             id="zoom-container"
             style={{ 
               scale, 
-              transformOrigin: origin,
+              x,
+              y,
+              transformOrigin: "50% 50%",
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
