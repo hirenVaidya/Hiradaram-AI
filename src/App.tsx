@@ -1,39 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './App.css';
 
+type ViewMode = 'login' | 'signup' | 'forgot' | 'otp';
+
 function App() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [viewMode, setViewMode] = useState<ViewMode>('login');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLogin) {
+    if (viewMode === 'login') {
       console.log('Login submitted:', { email, password });
-    } else {
+    } else if (viewMode === 'signup') {
       console.log('Signup submitted:', { username, email, password });
+    } else if (viewMode === 'forgot') {
+      console.log('Forgot password submitted for:', email);
+      // Simulate sending OTP and moving to OTP screen
+      setViewMode('otp');
+    } else if (viewMode === 'otp') {
+      console.log('OTP submitted:', otp.join(''));
     }
   };
 
-  const toggleMode = (e: React.MouseEvent) => {
+  const setMode = (e: React.MouseEvent, mode: ViewMode) => {
     e.preventDefault();
-    setIsLogin(!isLogin);
-    // Optional: clear fields on toggle
-    setUsername('');
-    setEmail('');
-    setPassword('');
+    setViewMode(mode);
+    if (mode === 'login' || mode === 'signup') {
+      setUsername('');
+      setPassword('');
+    }
+    if (mode === 'login') {
+      setOtp(['', '', '', '', '', '']);
+    }
   };
+
+  const handleOtpChange = (index: number, value: string) => {
+    // Only allow numbers
+    if (value && isNaN(Number(value))) return;
+    
+    // Take only the last character if they pasted or typed multiple
+    const digit = value.slice(-1);
+    
+    const newOtp = [...otp];
+    newOtp[index] = digit;
+    setOtp(newOtp);
+
+    // Focus next input automatically
+    if (digit && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Move to previous input on backspace if current is empty
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      prevInput?.focus();
+    }
+  };
+
+  const renderHeader = () => {
+    switch (viewMode) {
+      case 'login': return { title: 'Welcome Back', subtitle: 'Please enter your details to sign in.' };
+      case 'signup': return { title: 'Create an Account', subtitle: 'Please enter your details to sign up.' };
+      case 'forgot': return { title: 'Reset Password', subtitle: 'Enter your email to receive a 6-digit OTP.' };
+      case 'otp': return { title: 'Enter OTP', subtitle: `We sent a code to ${email || 'your email'}.` };
+    }
+  };
+
+  const { title, subtitle } = renderHeader();
 
   return (
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h2>{isLogin ? 'Welcome Back' : 'Create an Account'}</h2>
-          <p>{isLogin ? 'Please enter your details to sign in.' : 'Please enter your details to sign up.'}</p>
+          <h2>{title}</h2>
+          <p>{subtitle}</p>
         </div>
+        
         <form className="login-form" onSubmit={handleSubmit}>
-          {!isLogin && (
+          
+          {viewMode === 'signup' && (
             <div className="input-group">
               <input 
                 type="text" 
@@ -46,57 +97,92 @@ function App() {
               <label htmlFor="username">Username</label>
             </div>
           )}
-          <div className="input-group">
-            <input 
-              type="email" 
-              id="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder=" "
-            />
-            <label htmlFor="email">Email address</label>
-          </div>
-          <div className="input-group">
-            <input 
-              type="password" 
-              id="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder=" "
-            />
-            <label htmlFor="password">Password</label>
-          </div>
-          
-          {isLogin && (
+
+          {(viewMode === 'login' || viewMode === 'signup' || viewMode === 'forgot') && (
+            <div className="input-group">
+              <input 
+                type="email" 
+                id="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder=" "
+              />
+              <label htmlFor="email">Email address</label>
+            </div>
+          )}
+
+          {(viewMode === 'login' || viewMode === 'signup') && (
+            <div className="input-group">
+              <input 
+                type="password" 
+                id="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder=" "
+              />
+              <label htmlFor="password">Password</label>
+            </div>
+          )}
+
+          {viewMode === 'otp' && (
+            <div className="otp-container">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`otp-${index}`}
+                  type="text"
+                  inputMode="numeric"
+                  className="otp-input"
+                  value={digit}
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                  autoComplete="off"
+                  maxLength={1}
+                  required
+                />
+              ))}
+            </div>
+          )}
+
+          {viewMode === 'login' && (
             <div className="form-actions">
               <div className="remember-me">
                 <input type="checkbox" id="remember" />
                 <label htmlFor="remember">Remember me</label>
               </div>
-              <a href="#" className="forgot-password">Forgot password?</a>
+              <a href="#" className="forgot-password" onClick={(e) => setMode(e, 'forgot')}>
+                Forgot password?
+              </a>
             </div>
           )}
 
           <button type="submit" className="login-button">
-            {isLogin ? 'Sign In' : 'Sign Up'}
+            {viewMode === 'login' ? 'Sign In' : 
+             viewMode === 'signup' ? 'Sign Up' : 
+             viewMode === 'forgot' ? 'Send OTP' : 'Verify OTP'}
           </button>
         </form>
-        <div className="social-login">
-          <p>Or continue with</p>
-          <div className="social-buttons">
-            <button className="social-btn">Google</button>
-            <button className="social-btn">GitHub</button>
+
+        {(viewMode === 'login' || viewMode === 'signup') && (
+          <div className="social-login">
+            <p>Or continue with</p>
+            <div className="social-buttons">
+              <button className="social-btn">Google</button>
+              <button className="social-btn">GitHub</button>
+            </div>
           </div>
-        </div>
+        )}
+
         <div className="login-footer">
-          <p>
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <a href="#" onClick={toggleMode}>
-              {isLogin ? 'Sign up' : 'Sign in'}
-            </a>
-          </p>
+          {viewMode === 'login' ? (
+            <p>Don't have an account? <a href="#" onClick={(e) => setMode(e, 'signup')}>Sign up</a></p>
+          ) : viewMode === 'signup' ? (
+            <p>Already have an account? <a href="#" onClick={(e) => setMode(e, 'login')}>Sign in</a></p>
+          ) : (
+            <p>Remember your password? <a href="#" onClick={(e) => setMode(e, 'login')}>Back to login</a></p>
+          )}
         </div>
       </div>
     </div>
