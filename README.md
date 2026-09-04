@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# Imagaze Full-Stack Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, high-performance web application featuring an immersive scroll-based zoom animation, a beautiful glassmorphism UI, and a fully secure backend with JWT and OAuth authentication.
 
-Currently, two official plugins are available:
+## 🌟 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Frontend (React + Vite + TypeScript)
+- **Immersive Scroll Animation**: A custom-engineered Framer Motion animation on the Home page. As the user scrolls down, the text `"WE DON'T ONLY IMAGINE BUT CREATE INTO REALITY"` expands dynamically from the center, seamlessly zooming deep into the letter 'O'.
+- **Glassmorphism UI**: A gorgeous, translucent aesthetic across the application, featuring a fixed frosted-glass navigation bar and glowing content cards.
+- **Dynamic Routing & Views**: Seamless switching between Home, Features, and About pages without full page reloads.
+- **Robust Auth UI**: A beautifully designed authentication portal supporting Login, Signup, Forgot Password, and an interactive 6-digit OTP entry screen with paste support.
 
-## React Compiler
+### Backend (Node.js + Express + MongoDB)
+- **Secure JWT Authentication**: Custom login and signup endpoints (`/api/auth/login` and `/api/auth/signup`) that securely generate JSON Web Tokens for session management.
+- **Persistent Sessions**: The frontend intercepts and stores the JWT in `localStorage`, keeping users securely logged in across page refreshes.
+- **Password Encryption**: All passwords are automatically salted and hashed using `bcryptjs` before being stored in the MongoDB database.
+- **Google & GitHub OAuth**: Integrated `passport.js` to allow seamless third-party logins via Google and GitHub.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Getting Started
 
-## Expanding the ESLint configuration
+Because this is a full-stack application, you need to run both the frontend and backend servers simultaneously.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Start the Backend Server
+First, ensure you have a local MongoDB instance running (usually on `mongodb://localhost:27017`).
+```bash
+cd server
+# Install backend dependencies
+npm install
+# Start the Express server (runs on port 5000)
+node index.js
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Configure OAuth (Important)
+To enable Google and GitHub logins, open `server/.env` and replace the placeholder keys with your actual API credentials:
+```env
+GOOGLE_CLIENT_ID=your_google_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+GITHUB_CLIENT_ID=your_github_id
+GITHUB_CLIENT_SECRET=your_github_secret
 ```
+
+### 3. Start the Frontend Server
+Open a new terminal window in the root directory of the project:
+```bash
+# Install frontend dependencies
+npm install
+# Start the Vite React app (runs on port 5173)
+npm run dev
+```
+
+## 🛠 Tech Stack
+- **Frontend**: React 18, TypeScript, Vite, Framer Motion, standard CSS.
+- **Backend**: Node.js, Express.js.
+- **Database**: MongoDB, Mongoose ODM.
+- **Security**: JSON Web Tokens (JWT), bcryptjs, Passport.js.
