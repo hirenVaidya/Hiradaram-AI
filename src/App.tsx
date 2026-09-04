@@ -19,16 +19,52 @@ function App() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+      setLoggedInView('home');
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (viewMode === 'login') {
-      if (email.toLowerCase() === 'hiren') {
-        setIsLoggedIn(true);
-      } else {
-        console.log('Login submitted:', { email, password });
+      try {
+        const res = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          setIsLoggedIn(true);
+          setLoggedInView('home');
+        } else {
+          alert(data.message || 'Login failed');
+        }
+      } catch (err) {
+        alert('Server connection error');
       }
     } else if (viewMode === 'signup') {
-      console.log('Signup submitted:', { username, email, password });
+      try {
+        const res = await fetch('http://localhost:5000/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          setIsLoggedIn(true);
+          setLoggedInView('home');
+        } else {
+          alert(data.message || 'Signup failed');
+        }
+      } catch (err) {
+        alert('Server connection error');
+      }
     } else if (viewMode === 'forgot') {
       console.log('Forgot password submitted for:', email);
       // Simulate sending OTP and moving to OTP screen
@@ -187,7 +223,11 @@ function App() {
             </a>
           </div>
           <div className="nav-right">
-            <button className="nav-action-button" onClick={() => { setIsLoggedIn(false); setLoggedInView('home'); }}>
+            <button className="nav-action-button" onClick={() => { 
+              localStorage.removeItem('token');
+              setIsLoggedIn(false); 
+              setLoggedInView('home'); 
+            }}>
               Logout
             </button>
           </div>
