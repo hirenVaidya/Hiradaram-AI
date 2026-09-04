@@ -20,6 +20,18 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    // Check for token in URL (from OAuth redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get('token');
+    
+    if (urlToken) {
+      localStorage.setItem('token', urlToken);
+      window.history.replaceState({}, document.title, "/");
+      setIsLoggedIn(true);
+      setLoggedInView('home');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     if (token) {
       setIsLoggedIn(true);
@@ -388,8 +400,8 @@ function App() {
           <div className="social-login">
             <p>Or continue with</p>
             <div className="social-buttons">
-              <button className="social-btn">Google</button>
-              <button className="social-btn">GitHub</button>
+              <button type="button" className="social-btn" onClick={() => window.location.href = 'http://localhost:5000/api/auth/google'}>Google</button>
+              <button type="button" className="social-btn" onClick={() => window.location.href = 'http://localhost:5000/api/auth/github'}>GitHub</button>
             </div>
           </div>
         )}
