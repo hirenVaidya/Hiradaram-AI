@@ -163,7 +163,7 @@ function App() {
     offset: ["start start", "end end"]
   });
   
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 150]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 5000]);
   const x = useTransform(scrollYProgress, v => v * xTarget.get());
   const y = useTransform(scrollYProgress, v => v * yTarget.get());
 
@@ -187,8 +187,8 @@ function App() {
         const dx = ox - cx;
         const dy = oy - cy;
         
-        xTarget.set(-150 * dx);
-        yTarget.set(-150 * dy);
+        xTarget.set(-5000 * dx);
+        yTarget.set(-5000 * dy);
         
         container.style.transform = originalTransform;
       }
