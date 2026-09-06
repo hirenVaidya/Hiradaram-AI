@@ -4,6 +4,8 @@ import VariableProximity from './VariableProximity';
 import Features from './Features';
 import About from './About';
 import { motion, useScroll, useTransform, useMotionValue } from 'motion/react';
+import Lottie from "lottie-react";
+import animationData from "./assets/animation.json";
 
 type ViewMode = 'login' | 'signup' | 'forgot' | 'otp';
 
@@ -300,12 +302,22 @@ function App() {
       
       <div className="login-left">
         
-        <div className="hero-content">
-          <motion.h1 
+        <div className="hero-content" style={{ marginTop: '-40px' }}>
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="hero-animation"
+          >
+            <Lottie animationData={animationData} loop={true} style={{ width: 350, height: 350, margin: '0 auto -60px auto' }} />
+          </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
             className="hero-title"
+            style={{ zIndex: 10, position: 'relative' }}
           >
             Imagaze
           </motion.h1>
