@@ -294,8 +294,51 @@ function App() {
 
   return (
     <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
+      <div className="login-left">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        
+        <div className="hero-content">
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="hero-title"
+          >
+            Imagaze
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="hero-subtitle"
+          >
+            Where imagination meets reality.
+          </motion.p>
+
+          <div className="floating-elements">
+             <motion.div 
+                className="glass-shape shape-1"
+                animate={{ y: [-20, 20, -20], rotate: [0, 10, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div 
+                className="glass-shape shape-2"
+                animate={{ y: [20, -20, 20], rotate: [0, -10, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <motion.div 
+                className="glass-shape shape-3"
+                animate={{ scale: [1, 1.1, 1], rotate: [0, 180, 360] }}
+                transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+              />
+          </div>
+        </div>
+      </div>
+
+      <div className="login-right">
+        <div className="login-card">
+          <div className="login-header">
           <h2>{title}</h2>
           <p>{subtitle}</p>
         </div>
@@ -415,6 +458,7 @@ function App() {
             <p>Remember your password? <a href="#" onClick={(e) => setMode(e, 'login')}>Back to login</a></p>
           )}
         </div>
+      </div>
       </div>
     </div>
   );
