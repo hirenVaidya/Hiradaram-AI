@@ -318,23 +318,6 @@ function App() {
             Where imagination meets reality.
           </motion.p>
 
-          <div className="floating-elements">
-             <motion.div 
-                className="glass-shape shape-1"
-                animate={{ y: [-20, 20, -20], rotate: [0, 10, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
-                className="glass-shape shape-2"
-                animate={{ y: [20, -20, 20], rotate: [0, -10, 0] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div 
-                className="glass-shape shape-3"
-                animate={{ scale: [1, 1.1, 1], rotate: [0, 180, 360] }}
-                transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-              />
-          </div>
         </div>
       </div>
 
